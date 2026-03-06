@@ -362,6 +362,32 @@ export type Database = {
           updated_at?: string;
         }
       }
+      log_presets: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          category: 'animal' | 'garden' | 'task' | 'note' | 'photo';
+          icon: string;
+          created_at: string;
+        }
+        Insert: {
+          id?: string;
+          user_id: string;
+          title: string;
+          category: 'animal' | 'garden' | 'task' | 'note' | 'photo';
+          icon?: string;
+          created_at?: string;
+        }
+        Update: {
+          id?: string;
+          user_id?: string;
+          title?: string;
+          category?: 'animal' | 'garden' | 'task' | 'note' | 'photo';
+          icon?: string;
+          created_at?: string;
+        }
+      }
       inventory_items: {
         Row: {
           id: string;
