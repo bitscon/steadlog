@@ -1,16 +1,16 @@
 # Mobile-First Architecture
 
 ## 1. Architecture Objective
-Praxis architecture must prioritize in-field, low-friction mobile logging while preserving reliable long-term homestead memory.
+SteadLog architecture must prioritize in-field, low-friction mobile logging while preserving reliable long-term homestead memory.
 
 Primary outcome:
 - fast capture now
 - durable sync later
 - clear historical retrieval always
 
-This architecture follows the normative standard in [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md).
+This architecture follows the normative standard in [SteadLog Design Philosophy](./STEADLOG_DESIGN_PHILOSOPHY.md).
 All new architecture decisions must pass the Barn Test before release.
-Timeline behavior and data responsibilities are defined in [Praxis Timeline Architecture](./PRAXIS_TIMELINE_ARCHITECTURE.md).
+Timeline behavior and data responsibilities are defined in [SteadLog Timeline Architecture](./STEADLOG_TIMELINE_ARCHITECTURE.md).
 
 ## 2. System Topology
 Primary architecture:

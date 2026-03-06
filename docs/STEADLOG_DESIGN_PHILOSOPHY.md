@@ -1,7 +1,7 @@
-# Praxis Design Philosophy
+# SteadLog Design Philosophy
 
 ## 1. Barn-First Mental Model
-Praxis is designed for use in real homestead conditions, not ideal office conditions.
+SteadLog is designed for use in real homestead conditions, not ideal office conditions.
 
 Assume the user is:
 - in the barn, garden, or field
@@ -22,7 +22,7 @@ Every feature and interaction must pass this test:
 If any answer is `no`, the design is not production-ready and must be redesigned.
 
 ## 3. Primary Product Behavior
-The primary action in Praxis is always:
+The primary action in SteadLog is always:
 
 `Log Action`
 
@@ -85,10 +85,10 @@ Use this checklist before shipping a new feature:
 Any failed check blocks release until corrected.
 
 ## 9. Governance
-This document is a normative standard for Praxis product and UX decisions.
+This document is a normative standard for SteadLog product and UX decisions.
 
 Related documents:
-- [Praxis Philosophy](./PRAXIS_PHILOSOPHY.md)
+- [SteadLog Philosophy](./STEADLOG_PHILOSOPHY.md)
 - [Mobile-First Architecture](./MOBILE_FIRST_ARCHITECTURE.md)
 - [Frictionless Logging UX](./FRICTIONLESS_LOGGING_UX.md)
-- [Praxis Timeline Architecture](./PRAXIS_TIMELINE_ARCHITECTURE.md)
+- [SteadLog Timeline Architecture](./STEADLOG_TIMELINE_ARCHITECTURE.md)

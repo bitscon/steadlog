@@ -1,7 +1,7 @@
-# Praxis Product Roadmap
+# SteadLog Product Roadmap
 
 ## 1. Roadmap Intent
-This roadmap defines a controlled transition from the current broad homestead management product into Praxis: a mobile-first homestead memory system.
+This roadmap defines a controlled transition from the current broad homestead management product into SteadLog: a mobile-first homestead memory system.
 
 ## 2. Phase Plan
 
@@ -13,7 +13,7 @@ Scope:
 - quick log UI for Animal/Garden/Task/Note/Photo
 - local-first storage and offline queue
 - sync service with idempotent writes
-- basic timeline/history following [Praxis Timeline Architecture](./PRAXIS_TIMELINE_ARCHITECTURE.md)
+- basic timeline/history following [SteadLog Timeline Architecture](./STEADLOG_TIMELINE_ARCHITECTURE.md)
 
 Exit criteria:
 - median log completion <= 5 seconds
@@ -40,7 +40,7 @@ Objective:
 - improve retention through meaningful reinforcement
 
 Scope:
-- Praxis Score
+- SteadLog Score
 - streaks and seasonal progress
 - milestone tracking and summaries
 - supportive reminders based on user behavior
@@ -88,14 +88,14 @@ Based on current codebase, prioritize:
 1. Keep and elevate: Journal, tasks/calendar, animals, core history.
 2. Simplify: goals, crop planning, inventory to lightweight operational context.
 3. De-emphasize from core navigation: finance, property assessment, infrastructure planning.
-4. Reframe: XP/achievements into Praxis Score and meaningful milestones.
+4. Reframe: XP/achievements into SteadLog Score and meaningful milestones.
 
 ## 5. Delivery Governance
 - each phase requires documented architecture decisions and acceptance metrics
 - no major UX expansion without preserving <= 5 second log path
 - release gates include offline reliability checks and telemetry validation
-- all phases must pass Barn Test validation defined in [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md)
-- timeline-related features must remain consistent with [Praxis Timeline Architecture](./PRAXIS_TIMELINE_ARCHITECTURE.md)
+- all phases must pass Barn Test validation defined in [SteadLog Design Philosophy](./STEADLOG_DESIGN_PHILOSOPHY.md)
+- timeline-related features must remain consistent with [SteadLog Timeline Architecture](./STEADLOG_TIMELINE_ARCHITECTURE.md)
 
 ## 6. Indicative Milestones
 - M1: quick log MVP on mobile with offline queue

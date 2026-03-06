@@ -32,8 +32,8 @@ export interface HomesteadActionInput {
 export type HomesteadAction = Tables<'homestead_actions'>;
 export type HomesteadActionInsert = TablesInsert<'homestead_actions'>;
 export type HomesteadActionMedia = Tables<'homestead_action_media'>;
-export type PraxisReminder = Tables<'praxis_reminders'>;
-export type PraxisMilestone = Tables<'praxis_milestones'>;
+export type SteadLogReminder = Tables<'praxis_reminders'>;
+export type SteadLogMilestone = Tables<'praxis_milestones'>;
 
 export interface TimelineEntry {
   id: string;
@@ -44,15 +44,15 @@ export interface TimelineEntry {
   category?: string;
   syncState?: SyncState;
   action?: HomesteadAction;
-  reminder?: PraxisReminder;
-  milestone?: PraxisMilestone;
+  reminder?: SteadLogReminder;
+  milestone?: SteadLogMilestone;
   media?: HomesteadActionMedia[];
 }
 
 export interface CreateActionResult {
   action: HomesteadAction;
   queued: boolean;
-  reminder?: PraxisReminder | null;
+  reminder?: SteadLogReminder | null;
   media?: HomesteadActionMedia[];
 }
 

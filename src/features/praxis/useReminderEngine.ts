@@ -55,7 +55,7 @@ export function useReminderEngine(userId?: string) {
         toast.info(`Reminder: ${reminder.title}`, {
           description: reminder.notes ?? `Due ${new Date(reminder.due_at).toLocaleString()}`,
         });
-        notifyBrowser(`Praxis Reminder: ${reminder.title}`, reminder.notes ?? 'Reminder is now due.');
+        notifyBrowser(`SteadLog Reminder: ${reminder.title}`, reminder.notes ?? 'Reminder is now due.');
 
         await updateReminderStatus(userId, reminder.id, 'sent', true);
         const nextNotifiedIds = [...notifiedSet, reminder.id];

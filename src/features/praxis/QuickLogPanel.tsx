@@ -145,7 +145,7 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
       });
 
       if (result.queued) {
-        toast.success('Saved offline. Praxis will sync when connection returns.');
+        toast.success('Saved offline. SteadLog will sync when connection returns.');
       } else {
         toast.success('Action logged to timeline.');
       }

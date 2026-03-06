@@ -8,8 +8,8 @@ Design principle:
 - minimum typing
 - immediate confirmation
 
-This UX standard is governed by [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md), including mandatory Barn Test validation.
-Timeline behavior after logging is defined in [Praxis Timeline Architecture](./PRAXIS_TIMELINE_ARCHITECTURE.md).
+This UX standard is governed by [SteadLog Design Philosophy](./STEADLOG_DESIGN_PHILOSOPHY.md), including mandatory Barn Test validation.
+Timeline behavior after logging is defined in [SteadLog Timeline Architecture](./STEADLOG_TIMELINE_ARCHITECTURE.md).
 
 ## 1.1 Barn Test Requirements for Logging
 The quick-log flow is valid only when all checks pass:
@@ -101,7 +101,7 @@ Failure handling:
 - haptic and visual feedback on successful save
 
 ## 9. UX Acceptance Criteria
-Praxis frictionless logging is accepted when:
+SteadLog frictionless logging is accepted when:
 - median completion time for quick log <= 5 seconds
 - p95 quick log completion <= 12 seconds
 - offline save success >= 99%

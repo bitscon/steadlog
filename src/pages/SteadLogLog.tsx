@@ -11,7 +11,7 @@ import { TimelineFeed } from '@/features/praxis/TimelineFeed';
 import type { ReminderStatus } from '@/features/praxis/types';
 import { useSyncQueue } from '@/features/praxis/useSyncQueue';
 
-export default function PraxisLog() {
+export default function SteadLogLog() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { pendingCount, syncing, syncNow } = useSyncQueue(user?.id);
@@ -42,7 +42,7 @@ export default function PraxisLog() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Praxis Quick Log</h1>
+          <h1 className="text-3xl font-bold tracking-tight">SteadLog Quick Log</h1>
           <p className="text-muted-foreground mt-1">
             Barn-first logging for one-hand use, offline resilience, and timeline memory.
           </p>

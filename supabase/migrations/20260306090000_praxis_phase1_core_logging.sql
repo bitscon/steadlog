@@ -1,4 +1,4 @@
--- Praxis Phase 1: Core logging, timeline primitives, reminders, and media attachments.
+-- SteadLog Phase 1: Core logging, timeline primitives, reminders, and media attachments.
 -- Barn-first requirements addressed via append-first action model + sync metadata + idempotent writes.
 
 create extension if not exists pgcrypto;
@@ -121,7 +121,7 @@ begin
     new.id,
     milestone_key,
     milestone_title,
-    'First logged ' || new.category || ' action recorded in Praxis.',
+    'First logged ' || new.category || ' action recorded in SteadLog.',
     new.action_timestamp
   )
   on conflict (user_id, milestone_type) do nothing;

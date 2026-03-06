@@ -1,7 +1,7 @@
-# Praxis Engagement Model
+# SteadLog Engagement Model
 
 ## 1. Core Loop
-Praxis reinforces one behavior loop:
+SteadLog reinforces one behavior loop:
 1. Perform homestead action
 2. Log action quickly
 3. See meaningful progress
@@ -9,8 +9,8 @@ Praxis reinforces one behavior loop:
 5. Use memory to improve next action
 
 This loop is the product engine.
-The timeline is the primary interface where this loop becomes visible to the user, as defined in [Praxis Timeline Architecture](./PRAXIS_TIMELINE_ARCHITECTURE.md).
-All engagement surfaces must remain Barn Test compliant under [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md).
+The timeline is the primary interface where this loop becomes visible to the user, as defined in [SteadLog Timeline Architecture](./STEADLOG_TIMELINE_ARCHITECTURE.md).
+All engagement surfaces must remain Barn Test compliant under [SteadLog Design Philosophy](./STEADLOG_DESIGN_PHILOSOPHY.md).
 
 ## 2. Engagement Objectives
 - increase consistency of logging without increasing cognitive burden
@@ -86,6 +86,6 @@ Supporting metrics:
 
 ## 9. Alignment to Existing System
 Current XP and achievements can be repurposed:
-- XP events -> Praxis Score factors
+- XP events -> SteadLog Score factors
 - achievements -> milestone and seasonal markers
 - leaderboard elements -> optional private progress comparisons

@@ -13,7 +13,7 @@ import type { ReminderStatus } from '@/features/praxis/types';
 
 const categoryOptions = ['all', 'animal', 'garden', 'task', 'note', 'photo', 'milestone', 'reminder'] as const;
 
-export default function PraxisTimeline() {
+export default function SteadLogTimeline() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [categoryFilter, setCategoryFilter] = useState<(typeof categoryOptions)[number]>('all');
@@ -63,7 +63,7 @@ export default function PraxisTimeline() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Praxis Timeline</h1>
+        <h1 className="text-3xl font-bold tracking-tight">SteadLog Timeline</h1>
         <p className="text-muted-foreground mt-1">Your living homestead history: actions, reminders, and milestones.</p>
       </div>
 

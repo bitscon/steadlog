@@ -1,10 +1,10 @@
 # Gamification Model
 
 ## 1. Intent
-Praxis uses behavioral reinforcement to support consistent logging and long-term memory building.
+SteadLog uses behavioral reinforcement to support consistent logging and long-term memory building.
 
 This is not a game layer. It is a motivation layer tied to real homestead activity.
-Reinforcement should be primarily delivered through timeline context and milestones defined in [Praxis Timeline Architecture](./PRAXIS_TIMELINE_ARCHITECTURE.md), and must satisfy the Barn Test in [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md).
+Reinforcement should be primarily delivered through timeline context and milestones defined in [SteadLog Timeline Architecture](./STEADLOG_TIMELINE_ARCHITECTURE.md), and must satisfy the Barn Test in [SteadLog Design Philosophy](./STEADLOG_DESIGN_PHILOSOPHY.md).
 
 ## 2. Design Principles
 1. Real action first: points come from logged homestead actions, not app-only interactions.
@@ -12,8 +12,8 @@ Reinforcement should be primarily delivered through timeline context and milesto
 3. No childish mechanics: avoid gimmicks, loot-box style randomness, or manipulative loops.
 4. Personal progress over competition: trend against personal baseline, not public rank pressure.
 
-## 3. Praxis Score
-Praxis Score is a composite indicator of consistency and breadth.
+## 3. SteadLog Score
+SteadLog Score is a composite indicator of consistency and breadth.
 
 Proposed weighted components:
 - Logging consistency (40%)
@@ -92,6 +92,6 @@ Measure engagement quality, not raw clicks:
 ## 10. Transition from Existing XP System
 Current XP/achievement structures can be reused as implementation scaffolding.
 Transition plan:
-- map XP events to Praxis Score factors
+- map XP events to SteadLog Score factors
 - replace leaderboard-first framing with personal progress framing
 - reword achievements as practical milestones and learning markers

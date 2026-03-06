@@ -1,6 +1,6 @@
-# Homestead Architect
+# SteadLog
 
-> A comprehensive farm management platform for modern homesteaders
+> A mobile-first homestead memory system for action logging and long-term recall
 
 [![Deploy to Production](https://github.com/bitscon/homestead-architect-game/actions/workflows/deploy.yml/badge.svg)](https://github.com/bitscon/homestead-architect-game/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -12,15 +12,15 @@
 
 ## 🌟 Features
 
-Homestead Architect is a modern farm management dashboard that helps homesteaders track, plan, and optimize their operations:
+SteadLog helps small and part-time homesteaders capture what they did, when they did it, and what happened:
 
-- **🐄 Animal Management** - Track livestock, health records, vaccinations, and breeding
-- **🌱 Crop Planning** - Seasonal planning, planting calendar, and rotation tracking  
-- **💰 Financial Tracking** - Income/expense management with category organization
-- **📊 Infrastructure Planning** - Manage buildings, equipment, and maintenance
-- **📝 Journal & Tasks** - Daily logs, task management, and goal setting
-- **🎮 Gamification** - XP system, achievements, and leaderboards to stay motivated
-- **📱 Responsive Design** - Works seamlessly on desktop, tablet, and mobile
+- **⚡ Quick Log Flow** - Tap category, enter action, save in seconds
+- **🕓 SteadLog Timeline** - Chronological history of homestead actions, reminders, and milestones
+- **📡 Offline-First Logging** - Queue logs locally and sync automatically when connectivity returns
+- **📸 Photo Attachments** - Capture and attach media to HomesteadAction records
+- **🎤 Voice-Assist Input** - Optional voice input for faster hands-busy logging
+- **🔔 Reminder Engine** - Action-linked reminders for follow-up tasks and care events
+- **📱 Barn-First UX** - Mobile-first interface built for one-hand use in field conditions
 
 ---
 
@@ -197,7 +197,7 @@ VITE_SUPABASE_URL=your_supabase_project_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 # Application Settings
-VITE_APP_NAME=Homestead Architect (Dev)
+VITE_APP_NAME=SteadLog (Dev)
 VITE_SHOW_GAME_DEBUG=true
 
 # Optional: Local PostgreSQL (if using Docker)
@@ -330,7 +330,7 @@ Comprehensive documentation is available in the repository:
 
 ## 🎮 Gamification System
 
-Homestead Architect includes a built-in gamification system to make farm management engaging:
+SteadLog includes a built-in gamification system to make farm management engaging:
 
 - **Experience Points (XP):** Earn XP for completing tasks, logging entries, and achieving goals
 - **Levels:** Progress through levels as you earn XP

@@ -1,9 +1,9 @@
-# Praxis Timeline Architecture
+# SteadLog Timeline Architecture
 
 ## 1. Purpose
-The Praxis Timeline is the emotional center of the product.
+The SteadLog Timeline is the emotional center of the product.
 
-Praxis means knowledge gained through action. The timeline is where that meaning becomes visible over time:
+SteadLog means knowledge gained through action. The timeline is where that meaning becomes visible over time:
 - action
 - reflection
 - learning
@@ -23,7 +23,7 @@ Product position:
 - desktop timeline is a richer review and analysis surface
 
 Design governance:
-- timeline interactions must pass the Barn Test in [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md)
+- timeline interactions must pass the Barn Test in [SteadLog Design Philosophy](./STEADLOG_DESIGN_PHILOSOPHY.md)
 
 ## 3. Timeline Data Structure
 The timeline is a unified read model composed of typed entries.

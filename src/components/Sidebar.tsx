@@ -10,7 +10,7 @@ const navSections = [
     items: [
       { title: "Overview", href: "/dashboard", icon: Home },
       { title: "Log Action", href: "/log", icon: PlusCircle },
-      { title: "Praxis Timeline", href: "/timeline", icon: History },
+      { title: "SteadLog Timeline", href: "/timeline", icon: History },
       { title: "Goals", href: "/goals", icon: Target },
       { title: "Journal", href: "/journal", icon: BookOpen },
       { title: "Achievements", href: "/achievements", icon: Trophy },
@@ -62,7 +62,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       {/* Logo/Title */}
       <div className="p-6 border-b border-border">
         <Link to="/dashboard" className="text-xl font-bold text-foreground">
-          Praxis
+          SteadLog
         </Link>
       </div>
 

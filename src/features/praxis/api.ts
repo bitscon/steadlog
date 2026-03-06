@@ -14,8 +14,8 @@ import type {
   HomesteadAction,
   HomesteadActionInput,
   HomesteadActionMedia,
-  PraxisMilestone,
-  PraxisReminder,
+  SteadLogMilestone,
+  SteadLogReminder,
   ReminderDraft,
   ReminderStatus,
   TimelineEntry,
@@ -114,7 +114,7 @@ async function createReminderInternal(
   userId: string,
   reminder: ReminderDraft,
   actionId?: string | null
-): Promise<PraxisReminder> {
+): Promise<SteadLogReminder> {
   const payload = {
     user_id: userId,
     action_id: actionId ?? null,
@@ -167,7 +167,7 @@ async function persistHomesteadActionOnline(
 
   if (error) throw error;
 
-  let reminder: PraxisReminder | null = null;
+  let reminder: SteadLogReminder | null = null;
   if (normalized.reminder) {
     reminder = await createReminderInternal(userId, normalized.reminder, action.id);
   }
@@ -311,7 +311,7 @@ export async function getActionMediaByActionIds(
   return data ?? [];
 }
 
-export async function getMilestones(userId: string, limit = 25): Promise<PraxisMilestone[]> {
+export async function getMilestones(userId: string, limit = 25): Promise<SteadLogMilestone[]> {
   const { data, error } = await supabase
     .from('praxis_milestones')
     .select('*')
@@ -326,7 +326,7 @@ export async function getMilestones(userId: string, limit = 25): Promise<PraxisM
 export async function getReminders(
   userId: string,
   opts?: { includeDismissed?: boolean; limit?: number }
-): Promise<PraxisReminder[]> {
+): Promise<SteadLogReminder[]> {
   let query = supabase
     .from('praxis_reminders')
     .select('*')
@@ -343,7 +343,7 @@ export async function getReminders(
   return data ?? [];
 }
 
-export async function getDueReminders(userId: string, at = new Date()): Promise<PraxisReminder[]> {
+export async function getDueReminders(userId: string, at = new Date()): Promise<SteadLogReminder[]> {
   const nowIso = at.toISOString();
   const { data, error } = await supabase
     .from('praxis_reminders')
@@ -362,7 +362,7 @@ export async function createReminder(
   userId: string,
   reminder: ReminderDraft,
   actionId?: string | null
-): Promise<PraxisReminder> {
+): Promise<SteadLogReminder> {
   return createReminderInternal(userId, reminder, actionId);
 }
 
@@ -371,7 +371,7 @@ export async function updateReminderStatus(
   reminderId: string,
   status: ReminderStatus,
   markNotified = false
-): Promise<PraxisReminder> {
+): Promise<SteadLogReminder> {
   const { data, error } = await supabase
     .from('praxis_reminders')
     .update({

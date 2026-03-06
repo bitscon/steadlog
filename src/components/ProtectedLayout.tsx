@@ -3,14 +3,14 @@ import { Menu } from "lucide-react";
 import { Outlet } from "react-router-dom";
 
 import { Sidebar } from "@/components/Sidebar";
-import { PraxisBackgroundServices } from "@/features/praxis/PraxisBackgroundServices";
+import { SteadLogBackgroundServices } from "@/features/praxis/SteadLogBackgroundServices";
 
 export function ProtectedLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <div className="flex min-h-screen w-full">
-      <PraxisBackgroundServices />
+      <SteadLogBackgroundServices />
 
       {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 h-14 border-b bg-card">
@@ -21,7 +21,7 @@ export function ProtectedLayout() {
         >
           <Menu className="h-5 w-5" />
         </button>
-        <span className="text-lg font-semibold text-foreground">Praxis</span>
+        <span className="text-lg font-semibold text-foreground">SteadLog</span>
         <div className="w-9" />
       </div>
 
