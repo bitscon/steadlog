@@ -230,6 +230,94 @@ export type Database = {
           updated_at?: string;
         }
       }
+      homestead_action_media: {
+        Row: {
+          id: string;
+          action_id: string;
+          user_id: string;
+          storage_path: string;
+          public_url: string | null;
+          mime_type: string | null;
+          size_bytes: number | null;
+          created_at: string;
+          metadata: Json;
+        }
+        Insert: {
+          id?: string;
+          action_id: string;
+          user_id: string;
+          storage_path: string;
+          public_url?: string | null;
+          mime_type?: string | null;
+          size_bytes?: number | null;
+          created_at?: string;
+          metadata?: Json;
+        }
+        Update: {
+          id?: string;
+          action_id?: string;
+          user_id?: string;
+          storage_path?: string;
+          public_url?: string | null;
+          mime_type?: string | null;
+          size_bytes?: number | null;
+          created_at?: string;
+          metadata?: Json;
+        }
+      }
+      homestead_actions: {
+        Row: {
+          id: string;
+          user_id: string;
+          client_id: string;
+          category: 'animal' | 'garden' | 'task' | 'note' | 'photo';
+          action_type: string;
+          animal_id: string | null;
+          garden_id: string | null;
+          notes: string | null;
+          action_timestamp: string;
+          location: string | null;
+          media_ids: string[];
+          created_at: string;
+          created_at_device: string | null;
+          sync_state: 'pending' | 'synced' | 'failed';
+          metadata: Json;
+        }
+        Insert: {
+          id?: string;
+          user_id: string;
+          client_id: string;
+          category: 'animal' | 'garden' | 'task' | 'note' | 'photo';
+          action_type: string;
+          animal_id?: string | null;
+          garden_id?: string | null;
+          notes?: string | null;
+          action_timestamp?: string;
+          location?: string | null;
+          media_ids?: string[];
+          created_at?: string;
+          created_at_device?: string | null;
+          sync_state?: 'pending' | 'synced' | 'failed';
+          metadata?: Json;
+        }
+        Update: {
+          id?: string;
+          user_id?: string;
+          client_id?: string;
+          category?: 'animal' | 'garden' | 'task' | 'note' | 'photo';
+          action_type?: string;
+          animal_id?: string | null;
+          garden_id?: string | null;
+          notes?: string | null;
+          action_timestamp?: string;
+          location?: string | null;
+          media_ids?: string[];
+          created_at?: string;
+          created_at_device?: string | null;
+          sync_state?: 'pending' | 'synced' | 'failed';
+          metadata?: Json;
+        }
+      }
       infrastructure: {
         Row: {
           id: string;
@@ -346,6 +434,85 @@ export type Database = {
           weather?: string | null;
           tags?: string[] | null;
           entry_date?: string;
+          created_at?: string;
+          updated_at?: string;
+        }
+      }
+      praxis_milestones: {
+        Row: {
+          id: string;
+          user_id: string;
+          action_id: string | null;
+          milestone_type: string;
+          title: string;
+          description: string | null;
+          achieved_at: string;
+          created_at: string;
+          metadata: Json;
+        }
+        Insert: {
+          id?: string;
+          user_id: string;
+          action_id?: string | null;
+          milestone_type: string;
+          title: string;
+          description?: string | null;
+          achieved_at?: string;
+          created_at?: string;
+          metadata?: Json;
+        }
+        Update: {
+          id?: string;
+          user_id?: string;
+          action_id?: string | null;
+          milestone_type?: string;
+          title?: string;
+          description?: string | null;
+          achieved_at?: string;
+          created_at?: string;
+          metadata?: Json;
+        }
+      }
+      praxis_reminders: {
+        Row: {
+          id: string;
+          user_id: string;
+          action_id: string | null;
+          client_id: string;
+          title: string;
+          category: string;
+          due_at: string;
+          status: 'pending' | 'sent' | 'completed' | 'dismissed';
+          notes: string | null;
+          notified_at: string | null;
+          created_at: string;
+          updated_at: string;
+        }
+        Insert: {
+          id?: string;
+          user_id: string;
+          action_id?: string | null;
+          client_id?: string;
+          title: string;
+          category?: string;
+          due_at: string;
+          status?: 'pending' | 'sent' | 'completed' | 'dismissed';
+          notes?: string | null;
+          notified_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        }
+        Update: {
+          id?: string;
+          user_id?: string;
+          action_id?: string | null;
+          client_id?: string;
+          title?: string;
+          category?: string;
+          due_at?: string;
+          status?: 'pending' | 'sent' | 'completed' | 'dismissed';
+          notes?: string | null;
+          notified_at?: string | null;
           created_at?: string;
           updated_at?: string;
         }
@@ -680,6 +847,11 @@ export const Constants = {
       // Task priorities and statuses
       TASK_PRIORITY: ['low', 'medium', 'high'] as const,
       TASK_STATUS: ['pending', 'in_progress', 'completed'] as const,
+
+      // Praxis core logging categories and sync states
+      PRAXIS_ACTION_CATEGORY: ['animal', 'garden', 'task', 'note', 'photo'] as const,
+      PRAXIS_SYNC_STATE: ['pending', 'synced', 'failed'] as const,
+      PRAXIS_REMINDER_STATUS: ['pending', 'sent', 'completed', 'dismissed'] as const,
     },
   },
 } as const

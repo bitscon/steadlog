@@ -23,6 +23,8 @@ import BreedingTracker from "./pages/BreedingTracker";
 import StrategicPlanningHub from "./pages/StrategicPlanningHub";
 import UserProfile from "./pages/UserProfile";
 import Achievements from "./pages/Achievements";
+import PraxisLog from "./pages/PraxisLog";
+import PraxisTimeline from "./pages/PraxisTimeline";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,6 +56,8 @@ const App = () => {
                 }
               >
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/log" element={<PraxisLog />} />
+                <Route path="/timeline" element={<PraxisTimeline />} />
                 <Route path="/goals" element={<HomesteadGoals />} />
                 <Route path="/finance" element={<HomesteadBalance />} />
                 <Route path="/journal" element={<HomesteadJournal />} />

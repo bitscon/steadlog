@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Target, BookOpen, Heart, Sprout, Activity, Scale, Wrench, Boxes, MapPin, Calendar, Compass, Users, Shield, Trophy } from "lucide-react";
+import { Home, Target, BookOpen, Heart, Sprout, Activity, Scale, Wrench, Boxes, MapPin, Calendar, Compass, Users, Shield, Trophy, PlusCircle, History } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,8 @@ const navSections = [
     title: "My Homestead",
     items: [
       { title: "Overview", href: "/dashboard", icon: Home },
+      { title: "Log Action", href: "/log", icon: PlusCircle },
+      { title: "Praxis Timeline", href: "/timeline", icon: History },
       { title: "Goals", href: "/goals", icon: Target },
       { title: "Journal", href: "/journal", icon: BookOpen },
       { title: "Achievements", href: "/achievements", icon: Trophy },
@@ -60,7 +62,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       {/* Logo/Title */}
       <div className="p-6 border-b border-border">
         <Link to="/dashboard" className="text-xl font-bold text-foreground">
-          Homestead Architect
+          Praxis
         </Link>
       </div>
 
