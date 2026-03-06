@@ -1,6 +1,20 @@
 import { useMemo, useState, type ComponentType } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Camera, Check, Leaf, ListTodo, Loader2, Mic, NotebookPen, PawPrint, Plus } from 'lucide-react';
+import {
+  Camera,
+  Check,
+  Droplets,
+  Egg,
+  Leaf,
+  ListTodo,
+  Loader2,
+  Mic,
+  NotebookPen,
+  PawPrint,
+  Plus,
+  ShieldPlus,
+  Sprout,
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -11,6 +25,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { createAnimal, getAnimals } from '@/features/animals/api';
 import { createHomesteadAction } from '@/features/steadlog/api';
+import { ensureDefaultLogPresets, type LogPreset } from '@/features/steadlog/presetsApi';
 import type { ActionCategory } from '@/features/steadlog/types';
 import { cn } from '@/lib/utils';
 
@@ -30,6 +45,37 @@ const categories: Array<{
   { key: 'photo', label: 'Photo', icon: Camera },
 ];
 
+const presetLoggedActionTextMap: Record<string, string> = {
+  'Collect Eggs': 'Collected Eggs',
+  'Feed Animals': 'Fed Animals',
+  'Water Garden': 'Watered Garden',
+  Harvest: 'Harvested',
+  'Vaccinate Animal': 'Vaccinated Animal',
+  'Plant Seeds': 'Planted Seeds',
+};
+
+const presetIconMap: Record<string, ComponentType<{ className?: string }>> = {
+  egg: Egg,
+  'paw-print': PawPrint,
+  leaf: Leaf,
+  droplets: Droplets,
+  'shield-plus': ShieldPlus,
+  sprout: Sprout,
+};
+
+function getCategoryIcon(category: ActionCategory): ComponentType<{ className?: string }> {
+  const match = categories.find((item) => item.key === category);
+  return match?.icon ?? ListTodo;
+}
+
+function getPresetIcon(preset: LogPreset): ComponentType<{ className?: string }> {
+  return presetIconMap[preset.icon] ?? getCategoryIcon(preset.category);
+}
+
+function toPresetActionType(title: string): string {
+  return presetLoggedActionTextMap[title] ?? title;
+}
+
 export function QuickLogPanel({ userId }: QuickLogPanelProps) {
   const queryClient = useQueryClient();
   const [category, setCategory] = useState<ActionCategory>('animal');
@@ -48,6 +94,11 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
   const [reminderTitle, setReminderTitle] = useState('');
   const [reminderDueAt, setReminderDueAt] = useState('');
 
+  const { data: presets = [], isLoading: presetsLoading } = useQuery({
+    queryKey: ['log-presets', userId],
+    queryFn: () => ensureDefaultLogPresets(userId),
+  });
+
   const { data: animals = [], isLoading: animalsLoading } = useQuery({
     queryKey: ['animals', userId],
     queryFn: () => getAnimals(userId),
@@ -61,12 +112,7 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
 
   const isInlineAnimalCreateValid = newAnimalName.trim().length > 0 && newAnimalSpecies.trim().length > 0;
   const isFormValid = useMemo(() => actionType.trim().length > 1, [actionType]);
-  const canSaveAnimalAction =
-    category !== 'animal' ||
-    selectedAnimalId.length > 0 ||
-    (showInlineAnimalCreate && isInlineAnimalCreateValid) ||
-    (animals.length === 0 && isInlineAnimalCreateValid);
-  const canSave = isFormValid && canSaveAnimalAction && !saving;
+  const canSave = isFormValid && !saving;
 
   const quickPlaceholder = useMemo(() => {
     switch (category) {
@@ -158,12 +204,19 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
     try {
       let animalId: string | undefined;
       let animalName: string | undefined;
+      const hasAnyInlineAnimalInput = newAnimalName.trim().length > 0 || newAnimalSpecies.trim().length > 0;
 
       if (category === 'animal') {
         if (selectedAnimalId) {
           animalId = selectedAnimalId;
           animalName = selectedAnimal?.name;
-        } else if (isInlineAnimalCreateValid) {
+        } else if ((showInlineAnimalCreate || animals.length === 0) && hasAnyInlineAnimalInput) {
+          if (!isInlineAnimalCreateValid) {
+            toast.error('Quick add requires animal name and species.');
+            setSaving(false);
+            return;
+          }
+
           const createdAnimal = await createAnimal(userId, {
             name: newAnimalName.trim(),
             species: newAnimalSpecies.trim(),
@@ -172,10 +225,6 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
           animalName = createdAnimal.name;
           setSelectedAnimalId(createdAnimal.id);
           queryClient.invalidateQueries({ queryKey: ['animals', userId] });
-        } else {
-          toast.error('Select an animal or create one first.');
-          setSaving(false);
-          return;
         }
       }
 
@@ -208,6 +257,7 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
 
       queryClient.invalidateQueries({ queryKey: ['steadlog-timeline', userId] });
       queryClient.invalidateQueries({ queryKey: ['steadlog-reminders', userId] });
+      queryClient.invalidateQueries({ queryKey: ['log-presets', userId] });
       resetForm();
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to save action';
@@ -224,6 +274,38 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
         <CardDescription>Tap category, describe action, save. Built for under 5 seconds.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label>Quick Presets</Label>
+            <span className="text-xs text-muted-foreground">Custom Log -&gt;</span>
+          </div>
+
+          {presetsLoading ? (
+            <p className="text-sm text-muted-foreground">Loading presets...</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {presets.map((preset) => {
+                const Icon = getPresetIcon(preset);
+                return (
+                  <Button
+                    key={preset.id}
+                    type="button"
+                    variant="outline"
+                    className="h-12 justify-start px-3"
+                    onClick={() => {
+                      setCategory(preset.category);
+                      setActionType(toPresetActionType(preset.title));
+                    }}
+                  >
+                    <Icon className="mr-2 h-4 w-4" />
+                    <span className="truncate">{preset.title}</span>
+                  </Button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
           {categories.map((item) => {
             const Icon = item.icon;
@@ -251,7 +333,7 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
         {category === 'animal' && (
           <div className="rounded-md border p-3 space-y-3">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-sm font-medium">Select Animal</p>
+              <p className="text-sm font-medium">Select Animal (optional)</p>
               <Button
                 type="button"
                 variant="outline"
@@ -281,7 +363,7 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
               </Select>
             ) : (
               <p className="text-sm text-muted-foreground">
-                No animal profiles yet. Create one below to continue.
+                No animal profiles yet. You can quick add one below or log without selecting an animal.
               </p>
             )}
 
