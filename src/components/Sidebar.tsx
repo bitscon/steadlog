@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Target, BookOpen, Heart, Sprout, Activity, Scale, Wrench, Boxes, MapPin, Calendar, Compass, Users, Shield, Trophy, PlusCircle, History } from "lucide-react";
+import { Home, Target, BookOpen, Heart, Sprout, PawPrint, Scale, Wrench, Boxes, MapPin, Calendar, Compass, Users, Shield, Trophy, PlusCircle, History } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
@@ -21,7 +21,7 @@ const navSections = [
     items: [
       { title: "Breeding Tracker", href: "/breeding", icon: Heart },
       { title: "Crop Planner", href: "/crop-planner", icon: Sprout },
-      { title: "Health Hub", href: "/animals", icon: Activity },
+      { title: "Animals", href: "/animals", icon: PawPrint },
       { title: "Homestead Balance", href: "/finance", icon: Scale },
       { title: "Infrastructure", href: "/infrastructure", icon: Wrench },
       { title: "Inventory Management", href: "/inventory", icon: Boxes },

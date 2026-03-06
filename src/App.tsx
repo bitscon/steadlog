@@ -13,6 +13,8 @@ import Dashboard from "./pages/Dashboard";
 import PropertyAssessment from "./pages/PropertyAssessment";
 import SeasonalCalendar from "./pages/SeasonalCalendar";
 import HealthHub from "./pages/HealthHub";
+import Animals from "./pages/Animals";
+import AnimalProfile from "./pages/AnimalProfile";
 import InventoryManagement from "./pages/InventoryManagement";
 import HomesteadBalance from "./pages/HomesteadBalance";
 import HomesteadJournal from "./pages/HomesteadJournal";
@@ -61,7 +63,9 @@ const App = () => {
                 <Route path="/goals" element={<HomesteadGoals />} />
                 <Route path="/finance" element={<HomesteadBalance />} />
                 <Route path="/journal" element={<HomesteadJournal />} />
-                <Route path="/animals" element={<HealthHub />} />
+                <Route path="/animals" element={<Animals />} />
+                <Route path="/animals/:animalId" element={<AnimalProfile />} />
+                <Route path="/health-hub" element={<HealthHub />} />
                 <Route path="/inventory" element={<InventoryManagement />} />
                 <Route path="/property" element={<PropertyAssessment />} />
                 <Route path="/calendar" element={<SeasonalCalendar />} />
