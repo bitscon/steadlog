@@ -68,3 +68,26 @@ Timeline should remain one feed.
 
 ## Phase 2 Start Recommendation
 Start with **Animals + Tasks integration into HomesteadAction** because these have the strongest day-to-day logging relevance and existing stable UI surfaces.
+
+## Phase 2A Implementation: Animal Profiles
+
+### Completed Integration
+- Reused the existing `animals` domain module and schema (no duplicate animal registry introduced).
+- Added dedicated animal profile surfaces:
+  - `Animals` page for create/list.
+  - `Animal Profile` page for focused notes editing and action history.
+- Connected animal selection into Quick Log for `animal` category actions.
+- Added inline quick-create in Quick Log when no animal exists (or when user needs a new profile immediately).
+- Persisted `animal_id` on `homestead_actions` so action ownership stays linked to specific animals.
+- Added timeline title enrichment so animal actions render with names when available (example: `Vaccinated Daisy`).
+
+### Data Flow
+1. User selects `Animal` category in Quick Log.
+2. User selects existing animal or creates one inline.
+3. Action is saved to `homestead_actions` with `animal_id`.
+4. Timeline resolver joins animal names and renders contextual action titles.
+5. Offline queued actions preserve metadata and resolve to the same display behavior after sync.
+
+### Guardrails
+- Scope remains intentionally simple: no herd management, breeding logic, or production analytics.
+- `HomesteadAction` remains the central memory stream; animals provide context, not a separate event system.

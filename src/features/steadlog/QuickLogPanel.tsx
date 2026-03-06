@@ -1,13 +1,15 @@
 import { useMemo, useState, type ComponentType } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { Camera, Check, Leaf, ListTodo, Loader2, Mic, NotebookPen, PawPrint } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Camera, Check, Leaf, ListTodo, Loader2, Mic, NotebookPen, PawPrint, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { createAnimal, getAnimals } from '@/features/animals/api';
 import { createHomesteadAction } from '@/features/steadlog/api';
 import type { ActionCategory } from '@/features/steadlog/types';
 import { cn } from '@/lib/utils';
@@ -37,17 +39,39 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [selectedAnimalId, setSelectedAnimalId] = useState('');
+  const [showInlineAnimalCreate, setShowInlineAnimalCreate] = useState(false);
+  const [newAnimalName, setNewAnimalName] = useState('');
+  const [newAnimalSpecies, setNewAnimalSpecies] = useState('');
 
   const [reminderEnabled, setReminderEnabled] = useState(false);
   const [reminderTitle, setReminderTitle] = useState('');
   const [reminderDueAt, setReminderDueAt] = useState('');
 
+  const { data: animals = [], isLoading: animalsLoading } = useQuery({
+    queryKey: ['animals', userId],
+    queryFn: () => getAnimals(userId),
+    enabled: category === 'animal',
+  });
+
+  const selectedAnimal = useMemo(
+    () => animals.find((animal) => animal.id === selectedAnimalId),
+    [animals, selectedAnimalId]
+  );
+
+  const isInlineAnimalCreateValid = newAnimalName.trim().length > 0 && newAnimalSpecies.trim().length > 0;
   const isFormValid = useMemo(() => actionType.trim().length > 1, [actionType]);
+  const canSaveAnimalAction =
+    category !== 'animal' ||
+    selectedAnimalId.length > 0 ||
+    (showInlineAnimalCreate && isInlineAnimalCreateValid) ||
+    (animals.length === 0 && isInlineAnimalCreateValid);
+  const canSave = isFormValid && canSaveAnimalAction && !saving;
 
   const quickPlaceholder = useMemo(() => {
     switch (category) {
       case 'animal':
-        return 'Vaccinated goats';
+        return selectedAnimal ? `Vaccinated ${selectedAnimal.name}` : 'Vaccinated goat';
       case 'garden':
         return 'Planted carrots';
       case 'task':
@@ -59,7 +83,7 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
       default:
         return 'Log your action';
     }
-  }, [category]);
+  }, [category, selectedAnimal]);
 
   const startVoiceCapture = () => {
     const speechWindow = window as Window & {
@@ -114,6 +138,9 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
     setNotes('');
     setLocation('');
     setMediaFiles([]);
+    setShowInlineAnimalCreate(false);
+    setNewAnimalName('');
+    setNewAnimalSpecies('');
     setReminderEnabled(false);
     setReminderTitle('');
     setReminderDueAt('');
@@ -129,11 +156,36 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
 
     setSaving(true);
     try {
+      let animalId: string | undefined;
+      let animalName: string | undefined;
+
+      if (category === 'animal') {
+        if (selectedAnimalId) {
+          animalId = selectedAnimalId;
+          animalName = selectedAnimal?.name;
+        } else if (isInlineAnimalCreateValid) {
+          const createdAnimal = await createAnimal(userId, {
+            name: newAnimalName.trim(),
+            species: newAnimalSpecies.trim(),
+          });
+          animalId = createdAnimal.id;
+          animalName = createdAnimal.name;
+          setSelectedAnimalId(createdAnimal.id);
+          queryClient.invalidateQueries({ queryKey: ['animals', userId] });
+        } else {
+          toast.error('Select an animal or create one first.');
+          setSaving(false);
+          return;
+        }
+      }
+
       const result = await createHomesteadAction(userId, {
         category,
         action_type: actionType.trim(),
+        animal_id: animalId,
         notes: notes.trim() || undefined,
         location: location.trim() || undefined,
+        metadata: animalName ? { animal_name: animalName } : undefined,
         media_files: mediaFiles,
         reminder: reminderEnabled
           ? {
@@ -182,7 +234,12 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
                 type="button"
                 variant={selected ? 'default' : 'outline'}
                 className={cn('h-14 text-base justify-start px-3', selected && 'ring-2 ring-primary/60')}
-                onClick={() => setCategory(item.key)}
+                onClick={() => {
+                  setCategory(item.key);
+                  if (item.key !== 'animal') {
+                    setShowInlineAnimalCreate(false);
+                  }
+                }}
               >
                 <Icon className="mr-2 h-5 w-5" />
                 {item.label}
@@ -190,6 +247,70 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
             );
           })}
         </div>
+
+        {category === 'animal' && (
+          <div className="rounded-md border p-3 space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-sm font-medium">Select Animal</p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-9"
+                onClick={() => setShowInlineAnimalCreate((prev) => !prev)}
+              >
+                <Plus className="mr-1 h-4 w-4" />
+                {showInlineAnimalCreate ? 'Cancel' : 'Quick Add'}
+              </Button>
+            </div>
+
+            {animalsLoading ? (
+              <p className="text-sm text-muted-foreground">Loading animals...</p>
+            ) : animals.length > 0 ? (
+              <Select value={selectedAnimalId || undefined} onValueChange={setSelectedAnimalId}>
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Choose animal profile" />
+                </SelectTrigger>
+                <SelectContent>
+                  {animals.map((animal) => (
+                    <SelectItem key={animal.id} value={animal.id}>
+                      {animal.name} ({animal.species})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No animal profiles yet. Create one below to continue.
+              </p>
+            )}
+
+            {(showInlineAnimalCreate || animals.length === 0) && (
+              <div className="grid gap-3 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="new-animal-name">Animal Name</Label>
+                  <Input
+                    id="new-animal-name"
+                    value={newAnimalName}
+                    onChange={(event) => setNewAnimalName(event.target.value)}
+                    placeholder="Daisy"
+                    className="h-11 text-base"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="new-animal-species">Species</Label>
+                  <Input
+                    id="new-animal-species"
+                    value={newAnimalSpecies}
+                    onChange={(event) => setNewAnimalSpecies(event.target.value)}
+                    placeholder="Goat"
+                    className="h-11 text-base"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="space-y-2">
           <Label htmlFor="quick-action">Action</Label>
@@ -289,7 +410,7 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
         <Button
           type="button"
           className="h-14 w-full text-lg"
-          disabled={!isFormValid || saving}
+          disabled={!canSave}
           onClick={saveAction}
         >
           {saving ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Check className="mr-2 h-5 w-5" />}

@@ -23,6 +23,10 @@ import type {
 
 const ACTION_MEDIA_BUCKET = 'homestead-action-media';
 
+type ActionMetadata = {
+  animal_name?: unknown;
+};
+
 function normalizeActionPayload(
   input: HomesteadActionInput
 ): Omit<HomesteadActionInput, 'media_files'> & { client_id: string; created_at_device: string } {
@@ -48,6 +52,28 @@ function isLikelyNetworkError(error: unknown): boolean {
 function toStoragePath(userId: string, actionId: string, clientId: string, index: number, file: File): string {
   const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
   return `${userId}/${actionId}/${clientId}-${index}.${ext}`;
+}
+
+function getAnimalNameFromMetadata(action: HomesteadAction): string | undefined {
+  const metadata = action.metadata as ActionMetadata | null;
+  if (!metadata || typeof metadata !== 'object') return undefined;
+  return typeof metadata.animal_name === 'string' && metadata.animal_name.trim().length > 0
+    ? metadata.animal_name.trim()
+    : undefined;
+}
+
+function formatActionTitle(action: HomesteadAction, animalName?: string): string {
+  if (action.category !== 'animal' || !animalName) {
+    return action.action_type;
+  }
+
+  const normalizedTitle = action.action_type.trim().toLowerCase();
+  const normalizedName = animalName.trim().toLowerCase();
+  if (normalizedName && normalizedTitle.includes(normalizedName)) {
+    return action.action_type;
+  }
+
+  return `${action.action_type} ${animalName}`.trim();
 }
 
 async function uploadActionMedia(
@@ -311,6 +337,24 @@ export async function getActionMediaByActionIds(
   return data ?? [];
 }
 
+async function getAnimalNamesByIds(userId: string, animalIds: string[]): Promise<Record<string, string>> {
+  const uniqueIds = Array.from(new Set(animalIds.filter(Boolean)));
+  if (!uniqueIds.length) return {};
+
+  const { data, error } = await supabase
+    .from('animals')
+    .select('id,name')
+    .eq('user_id', userId)
+    .in('id', uniqueIds);
+
+  if (error) throw error;
+
+  return (data ?? []).reduce<Record<string, string>>((acc, animal) => {
+    acc[animal.id] = animal.name;
+    return acc;
+  }, {});
+}
+
 export async function getMilestones(userId: string, limit = 25): Promise<SteadLogMilestone[]> {
   const { data, error } = await supabase
     .from('praxis_milestones')
@@ -388,6 +432,8 @@ export async function updateReminderStatus(
 }
 
 export async function getTimelineEntries(userId: string, limit = 120): Promise<TimelineEntry[]> {
+  const pendingActions = getPendingQueuedActionRows(userId);
+
   const [actions, milestones, reminders] = await Promise.all([
     getHomesteadActions(userId, limit),
     getMilestones(userId, Math.min(limit, 40)),
@@ -404,11 +450,21 @@ export async function getTimelineEntries(userId: string, limit = 120): Promise<T
     return acc;
   }, {});
 
+  const animalNamesById = await getAnimalNamesByIds(
+    userId,
+    [...actions, ...pendingActions]
+      .map((action) => action.animal_id)
+      .filter((animalId): animalId is string => Boolean(animalId))
+  );
+
   const actionEntries: TimelineEntry[] = actions.map((action) => ({
     id: `action-${action.id}`,
     entryType: 'action',
     timestamp: action.action_timestamp,
-    title: action.action_type,
+    title: formatActionTitle(
+      action,
+      getAnimalNameFromMetadata(action) ?? (action.animal_id ? animalNamesById[action.animal_id] : undefined)
+    ),
     subtitle: action.notes ?? undefined,
     category: action.category,
     syncState: action.sync_state,
@@ -440,11 +496,14 @@ export async function getTimelineEntries(userId: string, limit = 120): Promise<T
       reminder,
     }));
 
-  const offlineEntries: TimelineEntry[] = getPendingQueuedActionRows(userId).map((action) => ({
+  const offlineEntries: TimelineEntry[] = pendingActions.map((action) => ({
     id: `offline-${action.client_id}`,
     entryType: 'action',
     timestamp: action.action_timestamp,
-    title: action.action_type,
+    title: formatActionTitle(
+      action,
+      getAnimalNameFromMetadata(action) ?? (action.animal_id ? animalNamesById[action.animal_id] : undefined)
+    ),
     subtitle: action.notes ?? undefined,
     category: action.category,
     syncState: 'pending',
