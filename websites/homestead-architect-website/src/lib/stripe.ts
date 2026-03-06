@@ -3,7 +3,7 @@ import { loadStripe } from '@stripe/stripe-js';
 
 // This will be set via environment variables
 export const stripePromise = loadStripe(
-  (import.meta as any).env?.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_live_placeholder'
+  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_live_placeholder'
 );
 
 // Pricing configuration
