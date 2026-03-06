@@ -848,10 +848,10 @@ export const Constants = {
       TASK_PRIORITY: ['low', 'medium', 'high'] as const,
       TASK_STATUS: ['pending', 'in_progress', 'completed'] as const,
 
-      // Praxis core logging categories and sync states
-      PRAXIS_ACTION_CATEGORY: ['animal', 'garden', 'task', 'note', 'photo'] as const,
-      PRAXIS_SYNC_STATE: ['pending', 'synced', 'failed'] as const,
-      PRAXIS_REMINDER_STATUS: ['pending', 'sent', 'completed', 'dismissed'] as const,
+      // SteadLog core logging categories and sync states
+      STEADLOG_ACTION_CATEGORY: ['animal', 'garden', 'task', 'note', 'photo'] as const,
+      STEADLOG_SYNC_STATE: ['pending', 'synced', 'failed'] as const,
+      STEADLOG_REMINDER_STATUS: ['pending', 'sent', 'completed', 'dismissed'] as const,
     },
   },
 } as const
