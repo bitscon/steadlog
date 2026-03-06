@@ -3,7 +3,7 @@ import { Menu } from "lucide-react";
 import { Outlet } from "react-router-dom";
 
 import { Sidebar } from "@/components/Sidebar";
-import { SteadLogBackgroundServices } from "@/features/praxis/SteadLogBackgroundServices";
+import { SteadLogBackgroundServices } from "@/features/steadlog/SteadLogBackgroundServices";
 
 export function ProtectedLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);

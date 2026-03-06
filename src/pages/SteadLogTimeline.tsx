@@ -7,9 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
-import { getReminders, getTimelineEntries, updateReminderStatus } from '@/features/praxis/api';
-import { TimelineFeed } from '@/features/praxis/TimelineFeed';
-import type { ReminderStatus } from '@/features/praxis/types';
+import { getReminders, getTimelineEntries, updateReminderStatus } from '@/features/steadlog/api';
+import { TimelineFeed } from '@/features/steadlog/TimelineFeed';
+import type { ReminderStatus } from '@/features/steadlog/types';
 
 const categoryOptions = ['all', 'animal', 'garden', 'task', 'note', 'photo', 'milestone', 'reminder'] as const;
 
@@ -20,13 +20,13 @@ export default function SteadLogTimeline() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const { data: entries = [], isLoading } = useQuery({
-    queryKey: ['praxis-timeline', user?.id, 'full'],
+    queryKey: ['steadlog-timeline', user?.id, 'full'],
     queryFn: () => getTimelineEntries(user!.id, 250),
     enabled: !!user?.id,
   });
 
   const { data: reminders = [] } = useQuery({
-    queryKey: ['praxis-reminders', user?.id],
+    queryKey: ['steadlog-reminders', user?.id],
     queryFn: () => getReminders(user!.id, { includeDismissed: false, limit: 25 }),
     enabled: !!user?.id,
   });
@@ -51,8 +51,8 @@ export default function SteadLogTimeline() {
     try {
       await updateReminderStatus(user.id, reminderId, status);
       toast.success(`Reminder ${status}.`);
-      queryClient.invalidateQueries({ queryKey: ['praxis-timeline', user.id] });
-      queryClient.invalidateQueries({ queryKey: ['praxis-reminders', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['steadlog-timeline', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['steadlog-reminders', user.id] });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to update reminder');
     }

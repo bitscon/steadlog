@@ -5,19 +5,19 @@ import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { getTimelineEntries, updateReminderStatus } from '@/features/praxis/api';
-import { QuickLogPanel } from '@/features/praxis/QuickLogPanel';
-import { TimelineFeed } from '@/features/praxis/TimelineFeed';
-import type { ReminderStatus } from '@/features/praxis/types';
-import { useSyncQueue } from '@/features/praxis/useSyncQueue';
+import { getTimelineEntries, updateReminderStatus } from '@/features/steadlog/api';
+import { QuickLogPanel } from '@/features/steadlog/QuickLogPanel';
+import { TimelineFeed } from '@/features/steadlog/TimelineFeed';
+import type { ReminderStatus } from '@/features/steadlog/types';
+import { useSyncQueue } from '@/features/steadlog/useSyncQueue';
 
 export default function SteadLogLog() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const { pendingCount, syncing, syncNow } = useSyncQueue(user?.id);
+  const { pendingCount, syncing, syncNow } = useSyncQueue(user?.id, { enableAutoSync: false });
 
   const { data: entries = [], isLoading } = useQuery({
-    queryKey: ['praxis-timeline', user?.id, 'recent'],
+    queryKey: ['steadlog-timeline', user?.id, 'recent'],
     queryFn: () => getTimelineEntries(user!.id, 25),
     enabled: !!user?.id,
   });
@@ -27,8 +27,8 @@ export default function SteadLogLog() {
     try {
       await updateReminderStatus(user.id, reminderId, status);
       toast.success(`Reminder ${status}.`);
-      queryClient.invalidateQueries({ queryKey: ['praxis-timeline', user.id] });
-      queryClient.invalidateQueries({ queryKey: ['praxis-reminders', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['steadlog-timeline', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['steadlog-reminders', user.id] });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to update reminder');
     }

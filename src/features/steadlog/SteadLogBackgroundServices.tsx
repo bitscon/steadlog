@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
-import { useReminderEngine } from '@/features/praxis/useReminderEngine';
-import { useSyncQueue } from '@/features/praxis/useSyncQueue';
+import { useReminderEngine } from '@/features/steadlog/useReminderEngine';
+import { useSyncQueue } from '@/features/steadlog/useSyncQueue';
 
 export function SteadLogBackgroundServices() {
   const { user } = useAuth();

@@ -8,8 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { createHomesteadAction } from '@/features/praxis/api';
-import type { ActionCategory } from '@/features/praxis/types';
+import { createHomesteadAction } from '@/features/steadlog/api';
+import type { ActionCategory } from '@/features/steadlog/types';
 import { cn } from '@/lib/utils';
 
 interface QuickLogPanelProps {
@@ -154,8 +154,8 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
         toast.info('Photos will require a connected upload. The action has been queued now.');
       }
 
-      queryClient.invalidateQueries({ queryKey: ['praxis-timeline', userId] });
-      queryClient.invalidateQueries({ queryKey: ['praxis-reminders', userId] });
+      queryClient.invalidateQueries({ queryKey: ['steadlog-timeline', userId] });
+      queryClient.invalidateQueries({ queryKey: ['steadlog-reminders', userId] });
       resetForm();
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to save action';

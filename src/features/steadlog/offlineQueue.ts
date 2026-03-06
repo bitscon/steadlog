@@ -1,10 +1,12 @@
-import type { HomesteadAction, HomesteadActionInput, OfflineQueuedAction } from '@/features/praxis/types';
+import type { HomesteadAction, HomesteadActionInput, OfflineQueuedAction } from '@/features/steadlog/types';
 
-const OFFLINE_QUEUE_STORAGE_KEY = 'praxis.offline.queue.v1';
+const OFFLINE_QUEUE_STORAGE_KEY = 'steadlog.offline.queue.v1';
+const LEGACY_OFFLINE_QUEUE_STORAGE_KEY = 'praxis.offline.queue.v1';
 
 function loadQueue(): OfflineQueuedAction[] {
   try {
-    const raw = localStorage.getItem(OFFLINE_QUEUE_STORAGE_KEY);
+    const raw =
+      localStorage.getItem(OFFLINE_QUEUE_STORAGE_KEY) ?? localStorage.getItem(LEGACY_OFFLINE_QUEUE_STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as OfflineQueuedAction[];
     if (!Array.isArray(parsed)) return [];
@@ -16,6 +18,7 @@ function loadQueue(): OfflineQueuedAction[] {
 
 function saveQueue(queue: OfflineQueuedAction[]) {
   localStorage.setItem(OFFLINE_QUEUE_STORAGE_KEY, JSON.stringify(queue));
+  localStorage.removeItem(LEGACY_OFFLINE_QUEUE_STORAGE_KEY);
 }
 
 export function queueOfflineAction(userId: string, payload: HomesteadActionInput): OfflineQueuedAction {

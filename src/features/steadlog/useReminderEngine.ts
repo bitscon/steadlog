@@ -2,15 +2,16 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { getDueReminders, updateReminderStatus } from '@/features/praxis/api';
+import { getDueReminders, updateReminderStatus } from '@/features/steadlog/api';
 
 const REMINDER_POLL_MS = 60_000;
 
-const notifiedCacheKey = 'praxis.reminders.notified.v1';
+const notifiedCacheKey = 'steadlog.reminders.notified.v1';
+const legacyNotifiedCacheKey = 'praxis.reminders.notified.v1';
 
 function loadNotifiedCache(): string[] {
   try {
-    const raw = localStorage.getItem(notifiedCacheKey);
+    const raw = localStorage.getItem(notifiedCacheKey) ?? localStorage.getItem(legacyNotifiedCacheKey);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as string[];
     return Array.isArray(parsed) ? parsed : [];
@@ -21,6 +22,7 @@ function loadNotifiedCache(): string[] {
 
 function saveNotifiedCache(ids: string[]) {
   localStorage.setItem(notifiedCacheKey, JSON.stringify(ids.slice(-300)));
+  localStorage.removeItem(legacyNotifiedCacheKey);
 }
 
 export function useReminderEngine(userId?: string) {
@@ -64,8 +66,8 @@ export function useReminderEngine(userId?: string) {
       }
 
       if (dueReminders.length > 0) {
-        queryClient.invalidateQueries({ queryKey: ['praxis-reminders', userId] });
-        queryClient.invalidateQueries({ queryKey: ['praxis-timeline', userId] });
+        queryClient.invalidateQueries({ queryKey: ['steadlog-reminders', userId] });
+        queryClient.invalidateQueries({ queryKey: ['steadlog-timeline', userId] });
       }
     } finally {
       setRunning(false);

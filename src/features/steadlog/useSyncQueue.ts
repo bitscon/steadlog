@@ -2,11 +2,16 @@ import { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-import { flushQueuedHomesteadActions, getOfflineQueueCount } from '@/features/praxis/api';
+import { flushQueuedHomesteadActions, getOfflineQueueCount } from '@/features/steadlog/api';
 
 const SYNC_INTERVAL_MS = 30_000;
 
-export function useSyncQueue(userId?: string) {
+interface UseSyncQueueOptions {
+  enableAutoSync?: boolean;
+}
+
+export function useSyncQueue(userId?: string, options?: UseSyncQueueOptions) {
+  const enableAutoSync = options?.enableAutoSync ?? true;
   const queryClient = useQueryClient();
   const [pendingCount, setPendingCount] = useState(0);
   const [syncing, setSyncing] = useState(false);
@@ -26,8 +31,8 @@ export function useSyncQueue(userId?: string) {
 
       if (result.synced > 0) {
         toast.success(`Synced ${result.synced} queued log${result.synced === 1 ? '' : 's'}.`);
-        queryClient.invalidateQueries({ queryKey: ['praxis-timeline', userId] });
-        queryClient.invalidateQueries({ queryKey: ['praxis-reminders', userId] });
+        queryClient.invalidateQueries({ queryKey: ['steadlog-timeline', userId] });
+        queryClient.invalidateQueries({ queryKey: ['steadlog-reminders', userId] });
       }
     } finally {
       setSyncing(false);
@@ -39,7 +44,7 @@ export function useSyncQueue(userId?: string) {
   }, [refreshPendingCount]);
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || !enableAutoSync) return;
 
     const onOnline = () => {
       void syncNow();
@@ -55,7 +60,7 @@ export function useSyncQueue(userId?: string) {
       window.removeEventListener('online', onOnline);
       window.clearInterval(interval);
     };
-  }, [refreshPendingCount, syncNow, userId]);
+  }, [enableAutoSync, refreshPendingCount, syncNow, userId]);
 
   return {
     pendingCount,

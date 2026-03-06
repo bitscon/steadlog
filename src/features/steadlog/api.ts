@@ -8,7 +8,7 @@ import {
   removeQueuedAction,
   toPendingAction,
   updateQueuedAction,
-} from '@/features/praxis/offlineQueue';
+} from '@/features/steadlog/offlineQueue';
 import type {
   CreateActionResult,
   HomesteadAction,
@@ -19,7 +19,7 @@ import type {
   ReminderDraft,
   ReminderStatus,
   TimelineEntry,
-} from '@/features/praxis/types';
+} from '@/features/steadlog/types';
 
 const ACTION_MEDIA_BUCKET = 'homestead-action-media';
 
