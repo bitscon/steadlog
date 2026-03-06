@@ -1,0 +1,9 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Allow placeholder/example values"
+regexes = [
+  '''replace-with-[a-z0-9-]+''',
+  '''example\.com'''
+]

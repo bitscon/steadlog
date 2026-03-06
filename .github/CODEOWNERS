@@ -1,0 +1,5 @@
+* @bitscon
+/docs/ @bitscon
+/.github/ @bitscon
+/src/features/ @bitscon
+/supabase/migrations/ @bitscon

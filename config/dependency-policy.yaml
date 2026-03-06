@@ -1,0 +1,17 @@
+version: 1
+policy:
+  allowed_package_managers:
+    - npm
+  require_lockfile:
+    node: true
+  minimum_runtime:
+    node: "22"
+  required_documents:
+    - docs/PROJECT_OVERVIEW.md
+    - docs/PRODUCT_VISION.md
+    - docs/PROBLEM_STATEMENT.md
+    - docs/DOMAIN_MODEL.md
+    - docs/SYSTEM_ARCHITECTURE.md
+    - docs/SECURITY_MODEL.md
+    - docs/TESTING_STRATEGY.md
+    - docs/ROADMAP.md
