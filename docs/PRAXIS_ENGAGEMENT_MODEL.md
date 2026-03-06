@@ -9,6 +9,8 @@ Praxis reinforces one behavior loop:
 5. Use memory to improve next action
 
 This loop is the product engine.
+The timeline is the primary interface where this loop becomes visible to the user, as defined in [Praxis Timeline Architecture](./PRAXIS_TIMELINE_ARCHITECTURE.md).
+All engagement surfaces must remain Barn Test compliant under [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md).
 
 ## 2. Engagement Objectives
 - increase consistency of logging without increasing cognitive burden
@@ -18,7 +20,7 @@ This loop is the product engine.
 ## 3. Engagement Layers
 ### 3.1 Immediate feedback (seconds)
 - save confirmation
-- timeline insertion
+- timeline insertion at top of feed
 - small score increment
 
 ### 3.2 Short-cycle feedback (daily/weekly)
@@ -58,6 +60,7 @@ Milestones should be displayed as a personal journey:
 - date achieved
 - associated photos/notes
 - linked actions that prove milestone
+- visible placement in timeline chronology
 
 Examples:
 - first successful seedling transplant

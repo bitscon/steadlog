@@ -91,3 +91,4 @@ Related documents:
 - [Praxis Philosophy](./PRAXIS_PHILOSOPHY.md)
 - [Mobile-First Architecture](./MOBILE_FIRST_ARCHITECTURE.md)
 - [Frictionless Logging UX](./FRICTIONLESS_LOGGING_UX.md)
+- [Praxis Timeline Architecture](./PRAXIS_TIMELINE_ARCHITECTURE.md)

@@ -4,6 +4,7 @@
 Praxis uses behavioral reinforcement to support consistent logging and long-term memory building.
 
 This is not a game layer. It is a motivation layer tied to real homestead activity.
+Reinforcement should be primarily delivered through timeline context and milestones defined in [Praxis Timeline Architecture](./PRAXIS_TIMELINE_ARCHITECTURE.md), and must satisfy the Barn Test in [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md).
 
 ## 2. Design Principles
 1. Real action first: points come from logged homestead actions, not app-only interactions.
@@ -64,7 +65,7 @@ Milestone requirements:
 
 ## 7. Reward Surfaces
 Allowed surfaces:
-- timeline highlights
+- timeline highlights and contextual callbacks
 - weekly progress recap
 - seasonal summary
 - personal milestone gallery

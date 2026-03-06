@@ -45,6 +45,9 @@ Design implications:
 Barn-first execution standard:
 - All product and UX decisions must follow [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md) and pass the Barn Test.
 
+Timeline doctrine:
+- The emotional center of Praxis is the timeline; all core modules should strengthen the living history model defined in [Praxis Timeline Architecture](./PRAXIS_TIMELINE_ARCHITECTURE.md).
+
 ## 5. Feature Audit of Current Codebase
 Audit source references include route and module definitions in `src/App.tsx`, `src/pages/*`, and `src/features/*`.
 
@@ -75,3 +78,4 @@ Praxis direction is succeeding when:
 - users can confidently reconstruct past actions by date, category, and media
 - weekly logging consistency increases without aggressive notifications
 - users report better memory and decision confidence across seasons
+- timeline revisits generate reflection and improved seasonal decisions

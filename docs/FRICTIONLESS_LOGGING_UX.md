@@ -9,6 +9,7 @@ Design principle:
 - immediate confirmation
 
 This UX standard is governed by [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md), including mandatory Barn Test validation.
+Timeline behavior after logging is defined in [Praxis Timeline Architecture](./PRAXIS_TIMELINE_ARCHITECTURE.md).
 
 ## 1.1 Barn Test Requirements for Logging
 The quick-log flow is valid only when all checks pass:
@@ -28,6 +29,10 @@ Example:
 - Action: Vaccinated goats
 - Detail: CD&T, 2 ml
 - Save
+
+Post-save expectation:
+- immediate return to timeline with visible confirmation of the new entry
+- no blocking spinner dependency on network availability
 
 ### 2.2 Defaulting strategy
 To stay below 5 seconds:
@@ -110,3 +115,4 @@ To preserve speed, quick log must avoid:
 - mandatory long-form fields
 - heavy planning or analytics interactions
 - dense configuration screens
+- timeline interruptions that prevent immediate next log

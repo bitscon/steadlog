@@ -10,12 +10,14 @@ Primary outcome:
 
 This architecture follows the normative standard in [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md).
 All new architecture decisions must pass the Barn Test before release.
+Timeline behavior and data responsibilities are defined in [Praxis Timeline Architecture](./PRAXIS_TIMELINE_ARCHITECTURE.md).
 
 ## 2. System Topology
 Primary architecture:
 - Mobile App (primary client; React Native + Expo or equivalent)
 - Web App (secondary client for review/planning)
 - Backend API (auth, domain services, sync endpoints)
+- Timeline Read Model (optimized aggregation for homestead history rendering)
 - Relational Database (system of record)
 - Object Storage (photos and media assets)
 - Observability stack (logs, traces, product telemetry)
@@ -36,10 +38,11 @@ Primary architecture:
 
 ## 4. Client Architecture
 Mobile app layers:
-- Presentation: quick log UI, timeline, record detail, reminder views
+- Presentation: quick log UI, timeline feed, record detail, reminder views
 - Application: use-case orchestration (create action, attach photo, parse voice)
 - Local persistence: SQLite/embedded store for actions, queue, media metadata
 - Sync engine: retries, batching, idempotency handling, conflict resolution
+- Timeline assembler: merges actions, reminders, milestones, and reflections into a unified local-first feed
 
 Web app layers:
 - memory review timeline

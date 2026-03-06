@@ -13,7 +13,7 @@ Scope:
 - quick log UI for Animal/Garden/Task/Note/Photo
 - local-first storage and offline queue
 - sync service with idempotent writes
-- basic timeline/history
+- basic timeline/history following [Praxis Timeline Architecture](./PRAXIS_TIMELINE_ARCHITECTURE.md)
 
 Exit criteria:
 - median log completion <= 5 seconds
@@ -29,6 +29,7 @@ Scope:
 - filterable timeline and search
 - action outcome tagging (worked/partial/failed)
 - seasonal calendar views linked to logs
+- historical context prompts anchored to timeline patterns
 
 Exit criteria:
 - users can retrieve and compare past actions quickly
@@ -94,6 +95,7 @@ Based on current codebase, prioritize:
 - no major UX expansion without preserving <= 5 second log path
 - release gates include offline reliability checks and telemetry validation
 - all phases must pass Barn Test validation defined in [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md)
+- timeline-related features must remain consistent with [Praxis Timeline Architecture](./PRAXIS_TIMELINE_ARCHITECTURE.md)
 
 ## 6. Indicative Milestones
 - M1: quick log MVP on mobile with offline queue
