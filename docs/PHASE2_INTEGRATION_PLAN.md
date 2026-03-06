@@ -91,3 +91,32 @@ Start with **Animals + Tasks integration into HomesteadAction** because these ha
 ### Guardrails
 - Scope remains intentionally simple: no herd management, breeding logic, or production analytics.
 - `HomesteadAction` remains the central memory stream; animals provide context, not a separate event system.
+
+## Phase 2B Implementation: Quick Presets + Shareable Log Cards
+
+### Completed Integration
+- Reused the existing `log_presets` entity and API surface (`presetsApi`) rather than creating parallel quick-action tables.
+- Seeded default presets (`Collect Eggs`, `Feed Animals`, `Water Garden`, `Harvest`, `Vaccinate Animal`, `Plant Seeds`) automatically when a user has no presets.
+- Integrated one-tap preset buttons into Quick Log to prefill `action_type` and category while preserving optional animal selection for animal actions.
+- Added in-panel preset management for edit/remove/add operations so users can evolve presets without leaving Quick Log.
+- Added timeline share controls only for synced `HomesteadAction` entries (no special storage model, no social graph additions).
+- Added share-card generation and export options:
+  - native share dialog (with image file when supported)
+  - copy action link (`/timeline?action=<id>`)
+  - download card image (PNG)
+
+### Data Flow: Quick Preset to Action
+1. User taps a preset in Quick Log.
+2. UI pre-fills action text/category and opens normal logging input state.
+3. User optionally selects an animal profile.
+4. Save writes canonical `homestead_actions` row (plus optional reminder/media), identical to custom logs.
+
+### Data Flow: Share Card
+1. User taps `Share` on a timeline action entry.
+2. UI derives card payload from existing timeline entry fields (`title`, `subtitle`, `timestamp`, `action.id`).
+3. Client renders a lightweight share card image and offers native share/copy/download.
+4. Shared action remains a standard `HomesteadAction`; no additional persistence required.
+
+### Guardrails
+- Sharing is informational only; no comments, likes, follows, or feed mechanics.
+- Reminders and milestones remain non-shareable in this phase to keep behavior explicit and simple.

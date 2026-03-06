@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { format } from 'date-fns';
 import {
   Bell,
@@ -7,6 +8,7 @@ import {
   ListTodo,
   NotebookPen,
   PawPrint,
+  Share2,
   Sparkles,
   WifiOff,
 } from 'lucide-react';
@@ -14,12 +16,15 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ShareLogCardDialog } from '@/features/steadlog/ShareLogCardDialog';
 import type { ReminderStatus, TimelineEntry } from '@/features/steadlog/types';
+import { cn } from '@/lib/utils';
 
 interface TimelineFeedProps {
   entries: TimelineEntry[];
   loading?: boolean;
   onReminderStatusChange?: (reminderId: string, status: ReminderStatus) => void;
+  highlightActionId?: string | null;
 }
 
 function getCategoryIcon(category?: string) {
@@ -39,7 +44,22 @@ function getCategoryIcon(category?: string) {
   }
 }
 
-export function TimelineFeed({ entries, loading = false, onReminderStatusChange }: TimelineFeedProps) {
+export function TimelineFeed({ entries, loading = false, onReminderStatusChange, highlightActionId }: TimelineFeedProps) {
+  const [shareEntry, setShareEntry] = useState<TimelineEntry | null>(null);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+
+  const openShareDialog = (entry: TimelineEntry) => {
+    setShareEntry(entry);
+    setShareDialogOpen(true);
+  };
+
+  const onShareDialogOpenChange = (open: boolean) => {
+    setShareDialogOpen(open);
+    if (!open) {
+      setShareEntry(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-3">
@@ -69,9 +89,12 @@ export function TimelineFeed({ entries, loading = false, onReminderStatusChange 
         const isReminder = entry.entryType === 'reminder' && entry.reminder;
         const isMilestone = entry.entryType === 'milestone';
         const media = entry.media ?? [];
+        const canShareAction = entry.entryType === 'action' && !!entry.action && entry.syncState !== 'pending';
+        const highlightedAction =
+          canShareAction && !!highlightActionId && entry.action?.id === highlightActionId;
 
         return (
-          <Card key={entry.id}>
+          <Card key={entry.id} className={cn(highlightedAction && 'ring-2 ring-primary/60')}>
             <CardHeader className="pb-2">
               <CardTitle className="text-base flex items-center justify-between gap-2">
                 <span className="flex items-center gap-2 min-w-0">
@@ -90,6 +113,10 @@ export function TimelineFeed({ entries, loading = false, onReminderStatusChange 
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
+              {highlightedAction && (
+                <Badge className="w-fit bg-primary/10 text-primary border-primary/20">Shared Link</Badge>
+              )}
+
               {entry.subtitle && <p className="text-sm text-muted-foreground whitespace-pre-wrap">{entry.subtitle}</p>}
 
               <div className="flex flex-wrap gap-2">
@@ -126,29 +153,41 @@ export function TimelineFeed({ entries, loading = false, onReminderStatusChange 
                 </div>
               )}
 
-              {isReminder && onReminderStatusChange && (
+              {(canShareAction || (isReminder && onReminderStatusChange)) && (
                 <div className="flex flex-wrap gap-2 pt-1">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => onReminderStatusChange(entry.reminder.id, 'completed')}
-                  >
-                    <CheckCircle2 className="mr-1 h-4 w-4" />
-                    Complete
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => onReminderStatusChange(entry.reminder.id, 'dismissed')}
-                  >
-                    Dismiss
-                  </Button>
+                  {canShareAction && (
+                    <Button size="sm" variant="outline" onClick={() => openShareDialog(entry)}>
+                      <Share2 className="mr-1 h-4 w-4" />
+                      Share
+                    </Button>
+                  )}
+                  {isReminder && onReminderStatusChange && (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => onReminderStatusChange(entry.reminder.id, 'completed')}
+                      >
+                        <CheckCircle2 className="mr-1 h-4 w-4" />
+                        Complete
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => onReminderStatusChange(entry.reminder.id, 'dismissed')}
+                      >
+                        Dismiss
+                      </Button>
+                    </>
+                  )}
                 </div>
               )}
             </CardContent>
           </Card>
         );
       })}
+
+      <ShareLogCardDialog entry={shareEntry} open={shareDialogOpen} onOpenChange={onShareDialogOpenChange} />
     </div>
   );
 }

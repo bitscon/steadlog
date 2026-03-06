@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { CalendarClock } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,8 +17,10 @@ const categoryOptions = ['all', 'animal', 'garden', 'task', 'note', 'photo', 'mi
 export default function SteadLogTimeline() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
   const [categoryFilter, setCategoryFilter] = useState<(typeof categoryOptions)[number]>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const highlightedActionId = searchParams.get('action');
 
   const { data: entries = [], isLoading } = useQuery({
     queryKey: ['steadlog-timeline', user?.id, 'full'],
@@ -120,6 +123,7 @@ export default function SteadLogTimeline() {
         entries={filteredEntries}
         loading={isLoading}
         onReminderStatusChange={handleReminderStatusChange}
+        highlightActionId={highlightedActionId}
       />
     </div>
   );
