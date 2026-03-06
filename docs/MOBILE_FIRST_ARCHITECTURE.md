@@ -8,6 +8,9 @@ Primary outcome:
 - durable sync later
 - clear historical retrieval always
 
+This architecture follows the normative standard in [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md).
+All new architecture decisions must pass the Barn Test before release.
+
 ## 2. System Topology
 Primary architecture:
 - Mobile App (primary client; React Native + Expo or equivalent)
@@ -93,6 +96,11 @@ Core targets:
 - sync success after reconnect: > 99% of queued entries within 5 minutes
 - data loss tolerance for accepted local writes: zero
 
+Barn Test release gates:
+- primary log paths are operable one-handed on common phone sizes
+- critical actions are readable and actionable in high-glare daylight
+- full log creation path works when fully offline
+
 ## 9. Deployment Architecture Guidance
 Environment model:
 - `dev`: rapid iteration and test datasets
@@ -109,3 +117,4 @@ Release strategy:
 2. sync protocol contract (batch size, retries, idempotency headers)
 3. media storage conventions and retention policy
 4. event taxonomy for analytics and engagement metrics
+5. Barn Test validation method in CI/device QA checklists

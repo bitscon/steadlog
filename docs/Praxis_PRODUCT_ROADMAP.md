@@ -93,6 +93,7 @@ Based on current codebase, prioritize:
 - each phase requires documented architecture decisions and acceptance metrics
 - no major UX expansion without preserving <= 5 second log path
 - release gates include offline reliability checks and telemetry validation
+- all phases must pass Barn Test validation defined in [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md)
 
 ## 6. Indicative Milestones
 - M1: quick log MVP on mobile with offline queue

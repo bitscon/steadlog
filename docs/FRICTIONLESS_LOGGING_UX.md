@@ -8,6 +8,15 @@ Design principle:
 - minimum typing
 - immediate confirmation
 
+This UX standard is governed by [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md), including mandatory Barn Test validation.
+
+## 1.1 Barn Test Requirements for Logging
+The quick-log flow is valid only when all checks pass:
+- completion under 5 seconds for common actions
+- one-handed operation with thumb-reachable primary actions
+- readability in direct sunlight
+- successful save while offline
+
 ## 2. Quick Log Core Flow
 ### 2.1 Standard 3-step flow
 1. Tap `Log`
@@ -92,6 +101,8 @@ Praxis frictionless logging is accepted when:
 - p95 quick log completion <= 12 seconds
 - offline save success >= 99%
 - at least 80% of daily logs use quick log instead of full-form edit
+- one-handed completion success >= 95% in usability test runs
+- no critical readability failures in high-glare visual QA
 
 ## 10. Out-of-Scope for Quick Log
 To preserve speed, quick log must avoid:

@@ -3,6 +3,9 @@
 ## 1. Domain Purpose
 The domain model captures homestead work as durable, queryable memory. The foundational event is a logged action with optional structured context.
 
+Barn-first constraint:
+- data capture requirements must support one-handed, under-5-second logging as defined in [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md).
+
 ## 2. Bounded Contexts
 - Identity and Access: users, authentication, preferences
 - Logging: homestead actions, notes, media, voice transcripts

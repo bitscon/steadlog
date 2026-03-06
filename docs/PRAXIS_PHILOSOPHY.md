@@ -42,6 +42,9 @@ Design implications:
 4. Honest reinforcement: engagement systems must reflect real progress, not artificial game loops.
 5. Progressive depth: new users get immediate value, advanced users can explore deeper analytics later.
 
+Barn-first execution standard:
+- All product and UX decisions must follow [Praxis Design Philosophy](./PRAXIS_DESIGN_PHILOSOPHY.md) and pass the Barn Test.
+
 ## 5. Feature Audit of Current Codebase
 Audit source references include route and module definitions in `src/App.tsx`, `src/pages/*`, and `src/features/*`.
 
