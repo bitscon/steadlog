@@ -1,4 +1,4 @@
-import { useMemo, useState, type ComponentType } from 'react';
+import { useEffect, useMemo, useRef, useState, type ComponentType } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Camera,
@@ -12,8 +12,10 @@ import {
   NotebookPen,
   PawPrint,
   Plus,
+  Settings2,
   ShieldPlus,
   Sprout,
+  Trash2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -25,7 +27,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { createAnimal, getAnimals } from '@/features/animals/api';
 import { createHomesteadAction } from '@/features/steadlog/api';
-import { ensureDefaultLogPresets, type LogPreset } from '@/features/steadlog/presetsApi';
+import {
+  createLogPreset,
+  deleteLogPreset,
+  ensureDefaultLogPresets,
+  updateLogPreset,
+  type LogPreset,
+} from '@/features/steadlog/presetsApi';
 import type { ActionCategory } from '@/features/steadlog/types';
 import { cn } from '@/lib/utils';
 
@@ -63,6 +71,33 @@ const presetIconMap: Record<string, ComponentType<{ className?: string }>> = {
   sprout: Sprout,
 };
 
+const presetIconOptions: Array<{
+  value: string;
+  label: string;
+  icon: ComponentType<{ className?: string }>;
+}> = [
+  { value: 'egg', label: 'Egg', icon: Egg },
+  { value: 'paw-print', label: 'Paw', icon: PawPrint },
+  { value: 'leaf', label: 'Leaf', icon: Leaf },
+  { value: 'droplets', label: 'Water', icon: Droplets },
+  { value: 'shield-plus', label: 'Vaccine', icon: ShieldPlus },
+  { value: 'sprout', label: 'Sprout', icon: Sprout },
+];
+
+type PresetDraft = {
+  title: string;
+  category: ActionCategory;
+  icon: string;
+};
+
+function toPresetErrorMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+  if (message.includes('log_presets_user_title_unique')) {
+    return 'Preset title already exists. Choose a different title.';
+  }
+  return message || 'Preset update failed.';
+}
+
 function getCategoryIcon(category: ActionCategory): ComponentType<{ className?: string }> {
   const match = categories.find((item) => item.key === category);
   return match?.icon ?? ListTodo;
@@ -78,6 +113,7 @@ function toPresetActionType(title: string): string {
 
 export function QuickLogPanel({ userId }: QuickLogPanelProps) {
   const queryClient = useQueryClient();
+  const actionInputRef = useRef<HTMLInputElement | null>(null);
   const [category, setCategory] = useState<ActionCategory>('animal');
   const [actionType, setActionType] = useState('');
   const [notes, setNotes] = useState('');
@@ -93,6 +129,13 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
   const [reminderEnabled, setReminderEnabled] = useState(false);
   const [reminderTitle, setReminderTitle] = useState('');
   const [reminderDueAt, setReminderDueAt] = useState('');
+  const [showPresetManager, setShowPresetManager] = useState(false);
+  const [presetDrafts, setPresetDrafts] = useState<Record<string, PresetDraft>>({});
+  const [activePresetId, setActivePresetId] = useState<string | null>(null);
+  const [newPresetTitle, setNewPresetTitle] = useState('');
+  const [newPresetCategory, setNewPresetCategory] = useState<ActionCategory>('task');
+  const [newPresetIcon, setNewPresetIcon] = useState('sprout');
+  const [creatingPreset, setCreatingPreset] = useState(false);
 
   const { data: presets = [], isLoading: presetsLoading } = useQuery({
     queryKey: ['log-presets', userId],
@@ -113,6 +156,19 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
   const isInlineAnimalCreateValid = newAnimalName.trim().length > 0 && newAnimalSpecies.trim().length > 0;
   const isFormValid = useMemo(() => actionType.trim().length > 1, [actionType]);
   const canSave = isFormValid && !saving;
+  const hasPresetRows = presets.length > 0;
+
+  useEffect(() => {
+    const drafts = presets.reduce<Record<string, PresetDraft>>((acc, preset) => {
+      acc[preset.id] = {
+        title: preset.title,
+        category: preset.category,
+        icon: preset.icon,
+      };
+      return acc;
+    }, {});
+    setPresetDrafts(drafts);
+  }, [presets]);
 
   const quickPlaceholder = useMemo(() => {
     switch (category) {
@@ -190,6 +246,98 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
     setReminderEnabled(false);
     setReminderTitle('');
     setReminderDueAt('');
+  };
+
+  const setPresetDraft = (presetId: string, updates: Partial<PresetDraft>) => {
+    setPresetDrafts((prev) => {
+      const existing = prev[presetId];
+      if (!existing) return prev;
+      return {
+        ...prev,
+        [presetId]: {
+          ...existing,
+          ...updates,
+        },
+      };
+    });
+  };
+
+  const refreshPresets = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['log-presets', userId] });
+  };
+
+  const savePresetDraft = async (preset: LogPreset) => {
+    const draft = presetDrafts[preset.id];
+    if (!draft) return;
+
+    const title = draft.title.trim();
+    if (!title) {
+      toast.error('Preset title is required.');
+      return;
+    }
+
+    const hasChanges =
+      title !== preset.title || draft.category !== preset.category || draft.icon !== preset.icon;
+    if (!hasChanges) {
+      return;
+    }
+
+    setActivePresetId(preset.id);
+    try {
+      await updateLogPreset(preset.id, userId, {
+        title,
+        category: draft.category,
+        icon: draft.icon,
+      });
+      toast.success('Preset updated.');
+      await refreshPresets();
+    } catch (error) {
+      toast.error(toPresetErrorMessage(error));
+    } finally {
+      setActivePresetId(null);
+    }
+  };
+
+  const removePreset = async (preset: LogPreset) => {
+    const confirmed = window.confirm(`Remove preset "${preset.title}"?`);
+    if (!confirmed) return;
+
+    setActivePresetId(preset.id);
+    try {
+      await deleteLogPreset(preset.id, userId);
+      toast.success('Preset removed.');
+      await refreshPresets();
+    } catch (error) {
+      toast.error(toPresetErrorMessage(error));
+    } finally {
+      setActivePresetId(null);
+    }
+  };
+
+  const addPreset = async () => {
+    const title = newPresetTitle.trim();
+    if (!title) {
+      toast.error('Preset title is required.');
+      return;
+    }
+
+    setCreatingPreset(true);
+    try {
+      await createLogPreset(userId, {
+        title,
+        category: newPresetCategory,
+        icon: newPresetIcon,
+      });
+      toast.success('Preset added.');
+      setNewPresetTitle('');
+      setNewPresetCategory('task');
+      setNewPresetIcon('sprout');
+      await refreshPresets();
+    } catch (error) {
+      toast.error(toPresetErrorMessage(error));
+    } finally {
+      setCreatingPreset(false);
+    }
   };
 
   const saveAction = async () => {
@@ -277,11 +425,25 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label>Quick Presets</Label>
-            <span className="text-xs text-muted-foreground">Custom Log -&gt;</span>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                className="h-8 px-2 text-xs"
+                onClick={() => setShowPresetManager((prev) => !prev)}
+              >
+                <Settings2 className="mr-1 h-3.5 w-3.5" />
+                {showPresetManager ? 'Done' : 'Manage'}
+              </Button>
+              <span className="text-xs text-muted-foreground">Custom Log -&gt;</span>
+            </div>
           </div>
 
           {presetsLoading ? (
             <p className="text-sm text-muted-foreground">Loading presets...</p>
+          ) : !hasPresetRows ? (
+            <p className="text-sm text-muted-foreground">No presets yet. Add one below.</p>
           ) : (
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {presets.map((preset) => {
@@ -295,6 +457,9 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
                     onClick={() => {
                       setCategory(preset.category);
                       setActionType(toPresetActionType(preset.title));
+                      requestAnimationFrame(() => {
+                        actionInputRef.current?.focus();
+                      });
                     }}
                   >
                     <Icon className="mr-2 h-4 w-4" />
@@ -302,6 +467,168 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
                   </Button>
                 );
               })}
+            </div>
+          )}
+
+          {showPresetManager && !presetsLoading && (
+            <div className="rounded-md border p-3 space-y-3">
+              <p className="text-xs text-muted-foreground">
+                Edit, remove, or add presets. Quick log buttons stay unchanged.
+              </p>
+
+              <div className="space-y-2">
+                {presets.map((preset) => {
+                  const draft = presetDrafts[preset.id] ?? {
+                    title: preset.title,
+                    category: preset.category,
+                    icon: preset.icon,
+                  };
+                  const title = draft.title.trim();
+                  const hasChanges =
+                    title !== preset.title || draft.category !== preset.category || draft.icon !== preset.icon;
+                  const busy = activePresetId === preset.id;
+
+                  return (
+                    <div key={preset.id} className="rounded-md border p-2 space-y-2">
+                      <Input
+                        value={draft.title}
+                        onChange={(event) => setPresetDraft(preset.id, { title: event.target.value })}
+                        placeholder="Preset title"
+                        className="h-10"
+                        maxLength={80}
+                        disabled={busy || creatingPreset}
+                      />
+                      <div className="grid grid-cols-2 gap-2">
+                        <Select
+                          value={draft.category}
+                          onValueChange={(value) =>
+                            setPresetDraft(preset.id, { category: value as ActionCategory })
+                          }
+                          disabled={busy || creatingPreset}
+                        >
+                          <SelectTrigger className="h-10">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {categories.map((item) => (
+                              <SelectItem key={item.key} value={item.key}>
+                                {item.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        <Select
+                          value={draft.icon}
+                          onValueChange={(value) => setPresetDraft(preset.id, { icon: value })}
+                          disabled={busy || creatingPreset}
+                        >
+                          <SelectTrigger className="h-10">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {presetIconOptions.map((option) => {
+                              const Icon = option.icon;
+                              return (
+                                <SelectItem key={option.value} value={option.value}>
+                                  <span className="flex items-center gap-2">
+                                    <Icon className="h-4 w-4" />
+                                    {option.label}
+                                  </span>
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          disabled={!hasChanges || !title || busy || creatingPreset}
+                          onClick={() => void savePresetDraft(preset)}
+                        >
+                          {busy ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : null}
+                          Save
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="destructive"
+                          disabled={busy || creatingPreset}
+                          onClick={() => void removePreset(preset)}
+                        >
+                          <Trash2 className="mr-1 h-4 w-4" />
+                          Remove
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="rounded-md border border-dashed p-2 space-y-2">
+                <p className="text-xs font-medium">Add preset</p>
+                <Input
+                  value={newPresetTitle}
+                  onChange={(event) => setNewPresetTitle(event.target.value)}
+                  placeholder="Preset title"
+                  className="h-10"
+                  maxLength={80}
+                  disabled={creatingPreset || activePresetId !== null}
+                />
+                <div className="grid grid-cols-2 gap-2">
+                  <Select
+                    value={newPresetCategory}
+                    onValueChange={(value) => setNewPresetCategory(value as ActionCategory)}
+                    disabled={creatingPreset || activePresetId !== null}
+                  >
+                    <SelectTrigger className="h-10">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((item) => (
+                        <SelectItem key={item.key} value={item.key}>
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select
+                    value={newPresetIcon}
+                    onValueChange={setNewPresetIcon}
+                    disabled={creatingPreset || activePresetId !== null}
+                  >
+                    <SelectTrigger className="h-10">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {presetIconOptions.map((option) => {
+                        const Icon = option.icon;
+                        return (
+                          <SelectItem key={option.value} value={option.value}>
+                            <span className="flex items-center gap-2">
+                              <Icon className="h-4 w-4" />
+                              {option.label}
+                            </span>
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled={!newPresetTitle.trim() || creatingPreset || activePresetId !== null}
+                  onClick={() => void addPreset()}
+                >
+                  {creatingPreset ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Plus className="mr-1 h-4 w-4" />}
+                  Add Preset
+                </Button>
+              </div>
             </div>
           )}
         </div>
@@ -399,6 +726,7 @@ export function QuickLogPanel({ userId }: QuickLogPanelProps) {
           <div className="flex gap-2">
             <Input
               id="quick-action"
+              ref={actionInputRef}
               value={actionType}
               onChange={(event) => setActionType(event.target.value)}
               placeholder={quickPlaceholder}
