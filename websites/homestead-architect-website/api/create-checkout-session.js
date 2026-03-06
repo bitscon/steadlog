@@ -2,7 +2,13 @@
 // This is a serverless function that creates Stripe checkout sessions
 // Deploy this to Vercel, Netlify, or your preferred serverless platform
 
-const stripe = require('stripe')('sk_org_live_0fL8PgbAE9xdc902t0e9v1Rt7bo76Kbi29uc6fX2FA3q97u979r8593BL5CH71q6Xm7xG60H4K37pV6xs3Cj3KE3mq3GT5y15hP3mh70O3qe7T254X3u56CB05F0xg09P3qa1V2aVwcCj8B028R2Mab0J9KYafQ5kag8350D5a9djO6Of0LMgYz9mXel07uVaM4aHU1lF7vh6wB7JDfwOeYn8nF7fK01');
+const getStripeClient = () => {
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+  if (!stripeSecretKey) {
+    throw new Error('STRIPE_SECRET_KEY is not configured');
+  }
+  return require('stripe')(stripeSecretKey);
+};
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -10,6 +16,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    const stripe = getStripeClient();
     const { priceId, successUrl, cancelUrl } = req.body;
 
     if (!priceId) {
