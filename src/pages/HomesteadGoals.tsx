@@ -69,10 +69,7 @@ const HomesteadGoals = () => {
 
   const createMutation = useMutation({
     mutationFn: (data: Omit<Database['public']['Tables']['homestead_goals']['Insert'], 'user_id'>) =>
-      createGoal({
-        ...data,
-        user_id: user!.id,
-      }),
+      createGoal(user!.id, data),
     onSuccess: (newGoal) => {
       queryClient.invalidateQueries({ queryKey: ['homestead-goals'] });
       
@@ -100,7 +97,7 @@ const HomesteadGoals = () => {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Database['public']['Tables']['homestead_goals']['Update'] }) =>
-      updateGoal(id, data),
+      updateGoal(id, user!.id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['homestead-goals'] });
       toast({
@@ -120,7 +117,7 @@ const HomesteadGoals = () => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: deleteGoal,
+    mutationFn: (goalId: string) => deleteGoal(goalId, user!.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['homestead-goals'] });
       toast({
@@ -141,10 +138,9 @@ const HomesteadGoals = () => {
 
   const createUpdateMutation = useMutation({
     mutationFn: (data: Omit<Database['public']['Tables']['goal_updates']['Insert'], 'goal_id' | 'user_id'>) =>
-      createGoalUpdate({
+      createGoalUpdate(user!.id, {
         ...data,
         goal_id: updateGoalId || selectedGoal!.id,
-        user_id: user!.id,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['all-goal-updates'] });

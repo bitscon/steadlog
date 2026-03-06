@@ -149,7 +149,7 @@ export default function HealthHub() {
 
     try {
       if (selectedMedication) {
-        const updated = await updateMedication(selectedMedication.id, data);
+        const updated = await updateMedication(selectedMedication.id, user.id, data);
         setMedications(medications.map((m) => (m.id === updated.id ? updated : m)));
         toast({
           title: 'Success',

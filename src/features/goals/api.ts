@@ -19,10 +19,16 @@ export const getGoals = async (userId: string): Promise<HomesteadGoal[]> => {
   return data || [];
 };
 
-export const createGoal = async (data: GoalInsert): Promise<HomesteadGoal> => {
+export const createGoal = async (
+  userId: string,
+  data: Omit<GoalInsert, 'user_id'>
+): Promise<HomesteadGoal> => {
   const { data: goal, error } = await supabase
     .from('homestead_goals')
-    .insert(data)
+    .insert({
+      ...data,
+      user_id: userId,
+    })
     .select()
     .single();
 
@@ -32,12 +38,14 @@ export const createGoal = async (data: GoalInsert): Promise<HomesteadGoal> => {
 
 export const updateGoal = async (
   id: string,
+  userId: string,
   data: GoalUpdate
 ): Promise<HomesteadGoal> => {
   const { data: goal, error } = await supabase
     .from('homestead_goals')
     .update(data)
     .eq('id', id)
+    .eq('user_id', userId)
     .select()
     .single();
 
@@ -45,19 +53,12 @@ export const updateGoal = async (
   return goal;
 };
 
-export const deleteGoal = async (id: string): Promise<void> => {
-  // Get current user
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    throw new Error('User must be authenticated to delete a goal');
-  }
-
+export const deleteGoal = async (id: string, userId: string): Promise<void> => {
   const { error } = await supabase
     .from('homestead_goals')
     .delete()
     .eq('id', id)
-    .eq('user_id', user.id);
+    .eq('user_id', userId);
 
   if (error) throw error;
 };
@@ -78,11 +79,15 @@ export const getGoalUpdates = async (
 };
 
 export const createGoalUpdate = async (
-  data: GoalUpdateInsert
+  userId: string,
+  data: Omit<GoalUpdateInsert, 'user_id'>
 ): Promise<GoalUpdateEntry> => {
   const { data: update, error } = await supabase
     .from('goal_updates')
-    .insert(data)
+    .insert({
+      ...data,
+      user_id: userId,
+    })
     .select()
     .single();
 

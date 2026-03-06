@@ -37,11 +37,12 @@ export async function getMedications(userId: string) {
   return data as Medication[];
 }
 
-export async function getMedication(id: string) {
+export async function getMedication(id: string, userId: string) {
   const { data, error } = await supabase
     .from('medications')
     .select('*')
     .eq('id', id)
+    .or(`user_id.eq.${userId},user_id.is.null`)
     .single();
 
   if (error) throw error;
@@ -62,11 +63,12 @@ export async function createMedication(userId: string, medication: MedicationIns
   return data as Medication;
 }
 
-export async function updateMedication(id: string, medication: Partial<MedicationInsert>) {
+export async function updateMedication(id: string, userId: string, medication: Partial<MedicationInsert>) {
   const { data, error } = await supabase
     .from('medications')
     .update(medication)
     .eq('id', id)
+    .eq('user_id', userId)
     .select()
     .single();
 
