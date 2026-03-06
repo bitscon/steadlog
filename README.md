@@ -2,6 +2,8 @@
 
 > A mobile-first homestead memory system for action logging and long-term recall
 
+SteadLog is a mobile-first homestead companion application that records homestead actions and builds a long-term memory of the homestead.
+
 [![Deploy to Production](https://github.com/bitscon/homestead-architect-game/actions/workflows/deploy.yml/badge.svg)](https://github.com/bitscon/homestead-architect-game/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -21,6 +23,21 @@ SteadLog helps small and part-time homesteaders capture what they did, when they
 - **🎤 Voice-Assist Input** - Optional voice input for faster hands-busy logging
 - **🔔 Reminder Engine** - Action-linked reminders for follow-up tasks and care events
 - **📱 Barn-First UX** - Mobile-first interface built for one-hand use in field conditions
+
+---
+
+## Version
+
+SteadLog v0.1
+
+Phase 1 complete.
+
+Includes:
+- HomesteadAction memory engine
+- Quick Log UX
+- Timeline
+- Reminder engine
+- Offline sync system
 
 ---
 
